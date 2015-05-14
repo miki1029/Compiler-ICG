@@ -11,42 +11,42 @@ int base = 1, offset = 1, width = 1;
 int lvalue, rvalue;
 
 enum opcodeEnum {
-	notop,	neg,	incop,	decop,	dup,
-	add,	sub,	mult,	divop,	modop,	swp,
-	andop,	orop,	gt,		lt,		ge,		le,		eq,		ne,
-	lod,	str,	ldc,	lda,
-	ujp,	tjp,	fjp,
-	chkh,	chkl,
-	ldi,	sti,
-	call,	ret,	retv,	ldp,	proc,	endop,
-	nop,	bgn,	sym
+    notop,	neg,	incop,	decop,	dup,
+    add,	sub,	mult,	divop,	modop,	swp,
+    andop,	orop,	gt,	lt,	ge,	le,	eq,	ne,
+    lod,	str,	ldc,	lda,
+    ujp,	tjp,	fjp,
+    chkh,	chkl,
+    ldi,	sti,
+    call,	ret,	retv,	ldp,	proc,	endop,
+    nop,	bgn,	sym
 };
 
 char *opcodeName[] = {
-	"notop","neg",	"inc",	"dec",	"dup",
-	"add",	"sub",	"mult",	"div",	"mod",	"swp",
-	"and",	"or",	"gt",	"lt",	"ge",	"le",	"eq",	"ne",
-	"lod",	"str",	"ldc",	"lda",
-	"ujp",	"tjp",	"fjp",
-	"chkh",	"chkl",
-	"ldi",	"sti",
-	"call",	"ret",	"retv",	"ldp",	"proc",	"end",
-	"nop",	"bgn",	"sym"
+    "notop",    "neg",	"inc",	"dec",	"dup",
+    "add",	"sub",	"mult",	"div",	"mod",	"swp",
+    "and",	"or",	"gt",	"lt",	"ge",	"le",	"eq",	"ne",
+    "lod",	"str",	"ldc",	"lda",
+    "ujp",	"tjp",	"fjp",
+    "chkh",	"chkl",
+    "ldi",	"sti",
+    "call",	"ret",	"retv",	"ldp",	"proc",	"end",
+    "nop",	"bgn",	"sym"
 };
 
 enum typeEnum {
-	INT_TYPE,	VOID_TYPE,	VAR_TYPE,	CONST_TYPE,	FUNC_TYPE
+    INT_TYPE,	VOID_TYPE,	VAR_TYPE,	CONST_TYPE,	FUNC_TYPE
 };
 
 typedef struct tableType {
-	char name[LABEL_SIZE];
-	int typeSpecifier;
-	int typeQualifier;
-	int base;
-	int offset;
-	int width;
-	int initialValue;
-	int level;
+    char name[LABEL_SIZE];
+    int typeSpecifier;
+    int typeQualifier;
+    int base;
+    int offset;
+    int width;
+    int iniialValue;
+    int level;
 } SymbolTable;
 
 SymbolTable symbolTable[SYMTAB_SIZE];
@@ -55,39 +55,39 @@ int stTop;
 
 void initSymbolTable()
 {
-	stTop = 0;
+    stTop = 0;
 }
 
 void icg_error(int errno)
 {
-	printf("ICG_ERROR: %d\n", errno);
+    printf("ICG_ERROR: %d\n", errno);
 }
 
 //////////////////////////////////////////////////////////////////////////// Declaration
 int insert(char *name, int typeSpecifier, int typeQualifier,
-		int base, int offset, int width, int initialValue)
+        int base, int offset, int width, int initialValue)
 {
-	SymbolTable *stptr = &symbolTable[stTop];
-	strcpy(stptr->name, name);
-	stptr->typeSpecifier = typeSpecifier;
-	stptr->typeQualifier = typeQualifier;
-	stptr->base = base;
-	stptr->offset = offset;
-	stptr->width = width;
-	stptr->initialValue = initialValue;
-	stptr->level = symLevel;
+    SymbolTable *stptr = &symbolTable[stTop];
+    strcpy(stptr->name, name);
+    stptr->typeSpecifier = typeSpecifier;
+    stptr->typeQualifier = typeQualifier;
+    stptr->base = base;
+    stptr->offset = offset;
+    stptr->width = width;
+    stptr->initialValue = initialValue;
+    stptr->level = symLevel;
 
-	return ++stTop;
+    return ++stTop;
 }
 
 int typeSize(int typeSpecifier)
 {
-	if(typeSpecifier == INT_TYPE)
-		return 1;
-	else {
+    if(typeSpecifier == INT_TYPE)
+        return 1;
+    else {
         printf("not yet implemented\n");
-		return 1;
-	}
+        return 1;
+    }
 }
 
 void processSimpleVariable(Node *ptr, int typeSpecifier, int typeQualifier)
@@ -187,38 +187,38 @@ void processDeclaration(Node *ptr)
 //////////////////////////////////////////////////////////////////////////// Expression
 int lookup(char *name)
 {
-	int i;
-	for(i=0; i<stTop; i++) {
-		if((strcmp(name, symbolTable[i].name) == 0) && (symbolTable[i].level == symLevel)) {
-			return i;
-		}
-	}
-	return -1;
+    int i;
+    for(i=0; i<stTop; i++) {
+        if((strcmp(name, symbolTable[i].name) == 0) && (symbolTable[i].level == symLevel)) {
+            return i;
+        }
+    }
+    return -1;
 }
 
 void emit0(int opcode)
 {
-	fprintf(ucodeFile, "           %s\n", opcodeName[opcode]);
+    fprintf(ucodeFile, "           %s\n", opcodeName[opcode]);
 }
 
 void emit1(int opcode, int operand)
 {
-	fprintf(ucodeFile, "           %s %d\n", opcodeName[opcode], operand);
+    fprintf(ucodeFile, "           %s %d\n", opcodeName[opcode], operand);
 }
 
 void emit2(int opcode, int operand1, int operand2)
 {
-	fprintf(ucodeFile, "           %s %d %d\n", opcodeName[opcode], operand1, operand2);
+    fprintf(ucodeFile, "           %s %d %d\n", opcodeName[opcode], operand1, operand2);
 }
 
 void emit3(int opcode, int operand1, int operand2, int operand3)
 {
-	fprintf(ucodeFile, "           %s %d %d %d\n", opcodeName[opcode], operand1, operand2, operand3);
+    fprintf(ucodeFile, "           %s %d %d %d\n", opcodeName[opcode], operand1, operand2, operand3);
 }
 
 void emitJump(int opcode, char *label)
 {
-	fprintf(ucodeFile, "           %s %s\n", opcodeName[opcode], label);
+    fprintf(ucodeFile, "           %s %s\n", opcodeName[opcode], label);
 }
 
 void rv_emit(Node *ptr)
@@ -242,34 +242,34 @@ void rv_emit(Node *ptr)
 void processOperator(Node *ptr);
 int checkPredefined(Node *ptr)
 {
-	Node *p = NULL;
-	if(strcmp(ptr->token.value.id, "read") == 0) {
-		emit0(ldp);
-		p = ptr->brother; // ACTUAL_PARAM
-		while(p) {
-			if(p->noderep == nonterm) processOperator(p);
-			else rv_emit(p);
-			p = p->brother;
-		}
-		emitJump(call, "read");
-		return 1;
-	}
-	else if(strcmp(ptr->token.value.id, "write") == 0) {
-		emit0(ldp);
-		p = ptr->brother; // ACTUAL_PARAM
-		while(p) {
-			if(p->noderep == nonterm) processOperator(p);
-			else rv_emit(p);
-			p = p->brother;
-		}
-		emitJump(call, "write");
-		return 1;
-	}
-	else if(strcmp(ptr->token.value.id, "lf") == 0) {
-		emitJump(call, "lf");
-		return 1;
-	}
-	return 0;
+    Node *p = NULL;
+    if(strcmp(ptr->token.value.id, "read") == 0) {
+        emit0(ldp);
+        p = ptr->brother; // ACTUAL_PARAM
+        while(p) {
+            if(p->noderep == nonterm) processOperator(p);
+            else rv_emit(p);
+            p = p->brother;
+        }
+        emitJump(call, "read");
+        return 1;
+    }
+    else if(strcmp(ptr->token.value.id, "write") == 0) {
+        emit0(ldp);
+        p = ptr->brother; // ACTUAL_PARAM
+        while(p) {
+            if(p->noderep == nonterm) processOperator(p);
+            else rv_emit(p);
+            p = p->brother;
+        }
+        emitJump(call, "write");
+        return 1;
+    }
+    else if(strcmp(ptr->token.value.id, "lf") == 0) {
+        emitJump(call, "lf");
+        return 1;
+    }
+    return 0;
 }
 
 void processOperator(Node *ptr)
@@ -499,18 +499,18 @@ void processOperator(Node *ptr)
 //////////////////////////////////////////////////////////////////////////// Statement
 void genLabel(char *label)
 {
-	static int labelNum = 0;
-	sprintf(label, "$$%d", labelNum++);
+    static int labelNum = 0;
+    sprintf(label, "$$%d", labelNum++);
 }
 
 void emitLabel(char *label)
 {
-	int length;
-	length = strlen(label);
-	fprintf(ucodeFile, "%s", label);
-	for(; length < LABEL_SIZE+1; length++)
-		fprintf(ucodeFile, " ");
-	fprintf(ucodeFile, "nop\n");
+    int length;
+    length = strlen(label);
+    fprintf(ucodeFile, "%s", label);
+    for(; length < LABEL_SIZE+1; length++)
+        fprintf(ucodeFile, " ");
+    fprintf(ucodeFile, "nop\n");
 }
 
 void processCondition(Node *ptr)
@@ -521,8 +521,8 @@ void processCondition(Node *ptr)
 
 void processStatement(Node *ptr)
 {
-	Node *p;
-	int returnWithValue;
+    Node *p;
+    int returnWithValue;
 
     switch(ptr->token.number) {
         case COMPOUND_ST:
@@ -599,10 +599,10 @@ void processSimpleParamVariable(Node *ptr, int typeSpecifier, int typeQualifier)
 
     if(ptr->token.number != SIMPLE_VAR) printf("error in SIMPLE_VAR\n");
 
-	size = typeSize(typeSpecifier);
-	stIndex = insert(p->token.value.id, typeSpecifier, typeQualifier,
-			base, offset, 0, 0);
-	offset += size;
+    size = typeSize(typeSpecifier);
+    stIndex = insert(p->token.value.id, typeSpecifier, typeQualifier,
+            base, offset, 0, 0);
+    offset += size;
 }
 
 void processArrayParamVariable(Node *ptr, int typeSpecifier, int typeQualifier)
@@ -615,7 +615,7 @@ void processArrayParamVariable(Node *ptr, int typeSpecifier, int typeQualifier)
         return;
     }
 
-	size = typeSize(typeSpecifier);
+    size = typeSize(typeSpecifier);
     stIndex = insert(p->token.value.id, typeSpecifier, typeQualifier,
             base, offset, width, 0);
     offset += size;
@@ -646,26 +646,26 @@ void processParamDeclaration(Node *ptr)
 
     // step 2: process SIMPLE_VAR, ARRAY_VAR
     p = ptr->brother; // SIMPLE_VAR or ARRAY_VAR
-	switch(p->token.number) {
-		case SIMPLE_VAR: // simple variable
-			processSimpleParamVariable(p, typeSpecifier, typeQualifier);
-			break;
-		case ARRAY_VAR:  // array variable
-			processArrayParamVariable(p, typeSpecifier, typeQualifier);
-			break;
-		default:
-			printf("error in SIMPLE_VAR or ARRAY_VAR\n");
-			break;
-	}
+    switch(p->token.number) {
+        case SIMPLE_VAR: // simple variable
+            processSimpleParamVariable(p, typeSpecifier, typeQualifier);
+            break;
+        case ARRAY_VAR:  // array variable
+            processArrayParamVariable(p, typeSpecifier, typeQualifier);
+            break;
+        default:
+            printf("error in SIMPLE_VAR or ARRAY_VAR\n");
+            break;
+    }
 }
 void emitFunc(char *FuncName, int operand1, int operand2, int operand3)
 {
-	int label;
-	label = strlen(FuncName);
-	fprintf(ucodeFile, "%s", FuncName);
-	for(; label < LABEL_SIZE+1; label++)
-		fprintf(ucodeFile, " ");
-	fprintf(ucodeFile, "proc %d %d %d\n", operand1, operand2, operand3);
+    int label;
+    label = strlen(FuncName);
+    fprintf(ucodeFile, "%s", FuncName);
+    for(; label < LABEL_SIZE+1; label++)
+        fprintf(ucodeFile, " ");
+    fprintf(ucodeFile, "proc %d %d %d\n", operand1, operand2, operand3);
 }
 
 void processFuncHeader(Node *ptr)
@@ -704,77 +704,77 @@ void processFuncHeader(Node *ptr)
 
 void processFunction(Node *ptr)
 {
-	Node *p, *q;
-	int sizeOfVar = 0;
-	int numOfVar = 0;
-	int stIndex;
+    Node *p, *q;
+    int sizeOfVar = 0;
+    int numOfVar = 0;
+    int stIndex;
 
-	base++;
-	offset = 1;
+    base++;
+    offset = 1;
 
     if(ptr->token.number != FUNC_DEF) icg_error(4);
 
-	// step 1: process formal parameters
-	p = ptr->son->son->brother->brother; // FORMAL_PARA
-	p = p->son; // PARAM_DCL
-	while(p) {
-		if(p->token.number == PARAM_DCL) {
-			processParamDeclaration(p->son); // DCL_SPEC
-			sizeOfVar++;
-			numOfVar++;
-		}
-		p = p->brother;
-	}
+    // step 1: process formal parameters
+    p = ptr->son->son->brother->brother; // FORMAL_PARA
+    p = p->son; // PARAM_DCL
+    while(p) {
+        if(p->token.number == PARAM_DCL) {
+            processParamDeclaration(p->son); // DCL_SPEC
+            sizeOfVar++;
+            numOfVar++;
+        }
+        p = p->brother;
+    }
 
-	// step 2: process the declaration part in function body
-	p = ptr->son->brother->son->son; // DCL
-	while(p) {
-		if(p->token.number == DCL) {
-			processDeclaration(p->son);
-			q = p->son->brother;
-			while(q) {
-				if(q->token.number == DCL_ITEM) {
-					if(q->son->token.number == ARRAY_VAR) {
-						sizeOfVar += q->son->son->brother->token.value.num;
-					}
-					else {
-						sizeOfVar += 1;
-					}
-					numOfVar++;
-				}
-				q = q->brother;
-			}
-		}
-		p = p->brother;
-	}
+    // step 2: process the declaration part in function body
+    p = ptr->son->brother->son->son; // DCL
+    while(p) {
+        if(p->token.number == DCL) {
+            processDeclaration(p->son);
+            q = p->son->brother;
+            while(q) {
+                if(q->token.number == DCL_ITEM) {
+                    if(q->son->token.number == ARRAY_VAR) {
+                        sizeOfVar += q->son->son->brother->token.value.num;
+                    }
+                    else {
+                        sizeOfVar += 1;
+                    }
+                    numOfVar++;
+                }
+                q = q->brother;
+            }
+        }
+        p = p->brother;
+    }
 
-	// step 3: emit the function start code
-	p = ptr->son->son->brother;	// IDENT
-	emitFunc(p->token.value.id, sizeOfVar, base, 2);
-	for(stIndex = stTop-numOfVar; stIndex<stTop; stIndex++) {
-		emit3(sym, symbolTable[stIndex].base, symbolTable[stIndex].offset, symbolTable[stIndex].width);
-	}
+    // step 3: emit the function start code
+    p = ptr->son->son->brother;	// IDENT
+    emitFunc(p->token.value.id, sizeOfVar, base, 2);
+    for(stIndex = stTop-numOfVar; stIndex<stTop; stIndex++) {
+        emit3(sym, symbolTable[stIndex].base, symbolTable[stIndex].offset, symbolTable[stIndex].width);
+    }
 
-	// step 4: process the statement part in function body
-	p = ptr->son->brother;	// COMPOUND_ST
-	processStatement(p);
+    // step 4: process the statement part in function body
+    p = ptr->son->brother;	// COMPOUND_ST
+    processStatement(p);
 
-	// step 5: check if return type and return value
-	p = ptr->son->son;	// DCL_SPEC
-	if(p->token.number == DCL_SPEC) {
-		p = p->son;
-		if(p->token.number == VOID_NODE)
-			emit0(ret);
-		else if(p->token.number == CONST_NODE) {
-			if(p->brother->token.number == VOID_NODE)
-				emit0(ret);
-		}
-	}
+    // step 5: check if return type and return value
+    p = ptr->son->son;	// DCL_SPEC
+    if(p->token.number == DCL_SPEC) {
+        p = p->son;
+        if(p->token.number == VOID_NODE)
+            emit0(ret);
+        else if(p->token.number == CONST_NODE) {
+            if(p->brother->token.number == VOID_NODE)
+                emit0(ret);
+        }
+    }
 
-	// step 6: generate the ending codes
-	emit0(endop);
-	base--;
-	symLevel++;
+    // step 6: generate the ending codes
+    emit0(endop);
+    base--;
+    symLevel++;
 }
 
 void genSym(int base)
